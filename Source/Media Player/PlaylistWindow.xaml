@@ -1,0 +1,138 @@
+﻿<Window x:Class="Media_Player.PlaylistWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Media_Player"
+        mc:Ignorable="d"
+        Title="PlaylistWindow" Height="450" Width="800" Loaded="Window_Loaded">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="5* "/>
+        </Grid.ColumnDefinitions> 
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+
+        <Grid
+            Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel 
+                Grid.Row="0"
+                Orientation="Vertical">
+                <Label 
+                    Content="My Playlists" />
+                <ListView 
+                    SelectionChanged="OnSelectionChanged"
+                    Name="listview_playlist"
+                    HorizontalContentAlignment="Stretch"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListView.Resources>
+                        <ContextMenu x:Key="listview_contextmenu" >
+                            <MenuItem Header="Rename" Click="OnClick_RenamePlaylist" />
+                            <MenuItem Header="Remove" Click="OnClick_RemovePlaylist" />
+                            <MenuItem Header="Export Single Playlist..." Click="OnClick_ExportSinglePlaylist" />
+                            <MenuItem Header="Export All Playlists..." Click="OnClick_ExportAllPlaylist" />
+                            <MenuItem Header="Import Single Playlist..." Click="OnClick_ImportSinglePlaylist" />
+                            <MenuItem Header="Import Multiple Playlists..." Click="OnClick_ImportMultiplePlaylist" />
+                            <!--<MenuItem Header="Delete" Click="MenuItem_Delete_Click">
+                                <MenuItem.Icon>
+                                    <Image Source="/Images/other/delete.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>-->
+                        </ContextMenu>
+                    </ListView.Resources>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="ContextMenu" Value="{StaticResource listview_contextmenu}"/>
+                            <!--<Setter Property="Background" Value="#a0a0a4"/>-->
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsPlaying, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                    <Setter Property="Background" Value="#a0a0a4" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Image 
+                                    Grid.Column="0"
+                                    Source="/imgs/playlist.png" />
+                                <TextBlock 
+                                    Grid.Column="1"
+                                    Background="{Binding Background, UpdateSourceTrigger=PropertyChanged}"
+                                    Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackPanel>
+            <Button 
+                Click="OnClick_NewPlaylist"
+                HorizontalAlignment="Left"
+                Grid.Row="1"
+                Content="+ New Playlist" />
+        </Grid>
+
+        <GridSplitter 
+            Grid.Column="1"
+            HorizontalAlignment="Stretch" />
+        <StackPanel 
+            Grid.Column="2"
+            Orientation="Vertical">
+
+            <DataGrid
+                AllowDrop="True"
+                DragDrop.Drop="OnDrop_AddMedias"
+                Name="datagrid_medias" 
+                AutoGenerateColumns="False">
+                <DataGrid.Resources>
+                    <ContextMenu x:Key="rowMenu" >
+                        <MenuItem Header="Remove" Click="OnClick_RemoveMedia"/>
+                    </ContextMenu>
+                </DataGrid.Resources>
+                <DataGrid.ItemContainerStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="ContextMenu" Value="{StaticResource rowMenu}" />
+                        <EventSetter Event="MouseDoubleClick" Handler="OnMouseDoubleClick_PlayMedia" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsPlaying, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                <Setter Property="Background" Value="#a0a0a4" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.ItemContainerStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn 
+                        IsReadOnly="True"
+                        Header="Name" 
+                        Binding="{Binding Name}" />
+                    <DataGridTextColumn 
+                        IsReadOnly="True"   
+                        Header="Path" 
+                        Binding="{Binding Path}" />
+                </DataGrid.Columns>
+            </DataGrid>
+            <Button 
+                Name="btn_addMedia"
+                Visibility="Hidden"
+                Click="OnClick_AddMedia"
+                HorizontalAlignment="Left"
+                Content="+ Add Media" />
+        </StackPanel>
+    </Grid>
+
+</Window>
